@@ -1,0 +1,29 @@
+name: build-artifacts
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-swiftshader:
+    name: SwiftShader
+    runs-on: windows-2022
+
+    steps:
+      - name: Checkout SwiftShader
+        uses: actions/checkout@v4
+        with:
+          repository: google/swiftshader
+          path: swiftshader
+          submodules: recursive
+
+      - name: Build SwiftShader
+        shell: bash
+        run: |
+          cmake -Sswiftshader -Bbuild -DCMAKE_BUILD_TYPE=Release -Thost=x64
+          cmake --build build --target vk_swiftshader --config Release
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: swiftshader
+          path: build/Windows
